@@ -1,14 +1,16 @@
 use raylib::prelude::*;
 
-use crate::{game::Game, menu::Menu, network::Network};
+use crate::{game::Game, loading::loading, menu::Menu, network::Network};
 
 enum State {
     MainMenu,
+    Loading,
     Game,
     PauseMenu,
 }
 
 pub struct GameState {
+    debug: bool,
     state: State,
     network: Network,
     game: Option<Game>,
@@ -16,9 +18,10 @@ pub struct GameState {
 }
 
 impl GameState {
-    pub fn new() -> Self {
+    pub fn new(debug: bool) -> Self {
         Self {
             state: State::MainMenu,
+            debug,
             network: Network::new(),
             game: None,
             menu: Menu::new(),
@@ -40,9 +43,19 @@ impl GameState {
 
         while !rl.window_should_close() {
             let mut d = rl.begin_drawing(&thread);
+            if self.debug {
+                d.draw_fps(10, 10);
+            }
 
             match self.state {
-                State::MainMenu => self.menu.update(&mut d),
+                State::MainMenu => {
+                    self.menu.update(&mut d);
+                    if self.menu.should_submit(&mut d) {
+                        println!("JSON: [{}]", self.menu.to_json());
+                        self.state = State::Loading;
+                    }
+                }
+                State::Loading => loading(&mut d),
                 State::Game => self.game(&mut d),
                 State::PauseMenu => self.pause_menu(&mut d),
             }

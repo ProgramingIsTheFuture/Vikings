@@ -13,18 +13,24 @@ impl Menu {
         Self { auth: Auth::new() }
     }
 
+    pub fn should_submit(&mut self, d: &mut RaylibDrawHandle) -> bool {
+        self.auth.is_auth(d)
+    }
+
+    pub fn to_json(&self) -> String {
+        self.auth.to_json()
+    }
+
     pub fn update(&mut self, d: &mut RaylibDrawHandle) {
         d.clear_background(Color::WHITE);
 
         if self.auth.should_write(d) {
             d.set_mouse_cursor(MouseCursor::MOUSE_CURSOR_IBEAM);
-            self.auth.writing();
+            self.auth.writing(d);
         } else {
             d.set_mouse_cursor(MouseCursor::MOUSE_CURSOR_DEFAULT);
         };
 
-        d.draw_text(self.auth.username.as_str(), 12, 12, 20, Color::BLACK);
-
-        d.draw_rectangle_rec(self.auth.username_rect, Color::BLUE);
+        self.auth.draw(d);
     }
 }
