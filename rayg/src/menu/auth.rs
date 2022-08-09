@@ -64,6 +64,10 @@ impl Auth {
         }
     }
 
+    pub fn reset(&mut self) {
+        self.authentication.username = String::new();
+    }
+
     pub fn should_write(&mut self, d: &mut RaylibDrawHandle) -> bool {
         let x_mouse = d.get_mouse_x();
         let y_mouse = d.get_mouse_y();

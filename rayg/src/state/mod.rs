@@ -12,7 +12,7 @@ enum State {
 pub struct GameState {
     debug: bool,
     state: State,
-    network: Network,
+    network: Option<Network>,
     game: Option<Game>,
     menu: Menu,
 }
@@ -22,7 +22,7 @@ impl GameState {
         Self {
             state: State::MainMenu,
             debug,
-            network: Network::new(),
+            network: None,
             game: None,
             menu: Menu::new(),
         }
@@ -55,8 +55,27 @@ impl GameState {
                         self.state = State::Loading;
                     }
                 }
-                State::Loading => loading(&mut d),
-                State::Game => self.game(&mut d),
+                State::Loading => {
+                    loading(&mut d);
+
+                    self.network = match Network::new(self.menu.to_json()) {
+                        Err(_) => {
+                            self.state = State::MainMenu;
+                            self.menu.retry();
+                            None
+                        }
+                        Ok(n) => {
+                            self.state = State::Game;
+                            Some(n)
+                        }
+                    }
+                }
+                State::Game => {
+                    if let Some(net) = self.network.as_ref() {
+                        net.read();
+                    }
+                    self.game(&mut d)
+                }
                 State::PauseMenu => self.pause_menu(&mut d),
             }
         }
