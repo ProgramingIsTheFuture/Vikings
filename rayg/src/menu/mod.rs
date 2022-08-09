@@ -6,11 +6,20 @@ mod auth;
 
 pub struct Menu {
     auth: Auth,
+    retry: bool,
 }
 
 impl Menu {
     pub fn new() -> Self {
-        Self { auth: Auth::new() }
+        Self {
+            auth: Auth::new(),
+            retry: false,
+        }
+    }
+
+    pub fn retry(&mut self) {
+        self.retry = true;
+        self.auth.reset();
     }
 
     pub fn should_submit(&mut self, d: &mut RaylibDrawHandle) -> bool {

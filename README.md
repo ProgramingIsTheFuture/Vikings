@@ -4,8 +4,11 @@
 
 ### Network
 
-Client sends UDP packet to the server
-Client will wait a response (Valid/Invalid) * If no response from server, resend the packet *
-If the response is invalid we will let the user know about it!
+Server uses both TCP and UDP
 
-If valid response, let's continue to the game!
+TCP is used to validate and do the login to all the users that want to get into the game.
+The server will determine if the user should enter or not into the world.
+
+***For now the authentication is based on the username***
+
+UDP will be used to send all the information about all other users that are playing inside the world.
