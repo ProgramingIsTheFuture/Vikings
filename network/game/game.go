@@ -21,7 +21,7 @@ func Game() {
 
 	defer packet.Close()
 
-	// for
+	// World loop
 	for {
 		for _, v := range World {
 			_, err = packet.WriteTo([]byte("Hello from server"), v.Addr)

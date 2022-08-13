@@ -9,5 +9,4 @@ func main() {
 	go auth.Auth()
 
 	game.Game()
-
 }
